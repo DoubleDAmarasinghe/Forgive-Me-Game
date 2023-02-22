@@ -12,53 +12,60 @@ public class PlayerController : MonoBehaviour
     public float JumpHeight;
     private float gravity;
 
+    public float smooth;
+    private Quaternion targetRotation;
+
+    bool test = false;
+
     // Start is called before the first frame update
     void Start()
     {
         characterController = gameObject.GetComponent<CharacterController>();
-        
+        targetRotation = transform.rotation;
     }
 
     // Update is called once per frame
     void Update()
     {
         DirectionalRotation();
+
+        transform.rotation = Quaternion.Slerp(transform.rotation,targetRotation,10*smooth*Time.deltaTime);
         
+        //Debug.Log(this.transform.localEulerAngles.y);
 
         float horizontal = Input.GetAxis("Horizontal");
 
         if(this.transform.localEulerAngles.y==0)
         {
             moveVector = new Vector3(horizontal, 0, 0);
-            characterController.Move(moveVector*speed);
+            characterController.Move(moveVector*speed*Time.deltaTime);
         }
 
-        else if(this.transform.localEulerAngles.y==180)
+        else if(this.transform.localEulerAngles.y == 90)
         {
             moveVector = new Vector3(-horizontal, 0, 0);
-            characterController.Move(moveVector*speed);
+            characterController.Move(moveVector*speed*Time.deltaTime);
         }
 
         else if(this.transform.localEulerAngles.y==270)
         {
             moveVector = new Vector3(0, 0, horizontal);
-            characterController.Move(moveVector*speed);
+            characterController.Move(moveVector*speed*Time.deltaTime);
         }
 
-        else if(this.transform.localEulerAngles.y==90)
+        else if(this.transform.localEulerAngles.y==180)
         {
             moveVector = new Vector3(0, 0, -horizontal);
-            characterController.Move(moveVector*speed);
+            characterController.Move(moveVector*speed*Time.deltaTime);
         }
 
 
+        //jump
         gravity += Physics.gravity.y * Time.deltaTime;
 
-        if(Input.GetKeyUp(KeyCode.Space))
+        if(Input.GetKeyDown(KeyCode.Space))
         {
             gravity = JumpHeight;
-            
-            Debug.Log("gggggggggggggg");
         }
 
         
@@ -67,7 +74,7 @@ public class PlayerController : MonoBehaviour
         characterController.Move(v*Time.deltaTime);
         
         
-        Debug.Log(this.transform.localEulerAngles.y);
+        
         
     }
 
@@ -76,18 +83,14 @@ public class PlayerController : MonoBehaviour
         //directional rotation to left
         if(Input.GetKeyUp(KeyCode.O))
         {
-            this.transform.Rotate(0, 90 , 0, Space.World);
+            targetRotation *= Quaternion.AngleAxis(90,Vector3.up);
         }
 
         //directional rotation to right
         else if(Input.GetKeyUp(KeyCode.P))
         {
-            this.transform.Rotate(0, -90 , 0, Space.World);
+            targetRotation *= Quaternion.AngleAxis(-90,Vector3.up);
+            //this.transform.Rotate(0, -90 , 0, Space.World);
         }
-    }
-
-    void Jump()
-    {
-        
     }
 }

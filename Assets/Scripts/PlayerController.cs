@@ -11,24 +11,32 @@ public class PlayerController : MonoBehaviour
     public float JumpHeight;
     private float gravity;
     public float smooth;
+    public GameObject Base;
     bool toggle = false;
     private Quaternion targetRotation;
     int compass = 0;
+
+    [HideInInspector]
+    public bool IsLeft;
+    [HideInInspector]
+    public bool IsRight;
 
     // Start is called before the first frame update
     void Start()
     {
         characterController = gameObject.GetComponent<CharacterController>();
         targetRotation = transform.rotation;
+        IsRight = true;
+        IsLeft = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        ResetCompass();
-        Debug.Log(compass);
+        
         transform.rotation = Quaternion.Slerp(transform.rotation,targetRotation,10*smooth*Time.deltaTime);
 
+        ResetCompass();
         DirectionalRotation();
         MovementLogic();
         Jump();
@@ -41,49 +49,91 @@ public class PlayerController : MonoBehaviour
     {
         
         float horizontal = Input.GetAxis("Horizontal");
-        //  if(toggle)
-        // {
-        //     moveVector = new Vector3(0, 0, horizontal);
-        //     characterController.Move(moveVector*speed*Time.deltaTime);
-        // }
-
-        // else if(!toggle)
-        // {
-        //     moveVector = new Vector3(horizontal, 0, 0);
-        //     characterController.Move(moveVector*speed*Time.deltaTime);
-        //     //transform.rotation = Quaternion.AngleAxis(180,Vector3.up);
-        // }
-        //Debug.Log(horizontal);
+        
         if(compass == 0)
         {
             moveVector = new Vector3(horizontal, 0, 0);
             characterController.Move(moveVector*speed*Time.deltaTime);
+            
+            //character faced direction
+            if(horizontal > 0 && !IsRight)
+            {
+                Base.transform.Rotate(0,180,0);
+                IsRight = true;
+                IsLeft = false;
+            }
+            else if(horizontal < 0 && !IsLeft)
+            {
+                Base.transform.Rotate(0,180,0);
+                IsLeft = true;
+                IsRight = false;
+            }
         }
 
         if(compass == 3 || compass == -1)
         {
             moveVector = new Vector3(0, 0, horizontal);
             characterController.Move(moveVector*speed*Time.deltaTime);
+
+            //character faced direction
+            if(horizontal > 0 && !IsRight)
+            {
+                Base.transform.Rotate(0,180,0);
+                IsRight = true;
+                IsLeft = false;
+            }
+            else if(horizontal < 0 && !IsLeft)
+            {
+                Base.transform.Rotate(0,180,0);
+                IsLeft = true;
+                IsRight = false;
+            }
+             
         }
 
         if(compass == 2 || compass == -2)
         {
             moveVector = new Vector3(-horizontal, 0, 0);
             characterController.Move(moveVector*speed*Time.deltaTime);
+
+            //character faced direction
+            if(horizontal > 0 && !IsRight)
+            {
+                Base.transform.Rotate(0,180,0);
+                IsRight = true;
+                IsLeft = false;
+            }
+            else if(horizontal < 0 && !IsLeft)
+            {
+                Base.transform.Rotate(0,180,0);
+                IsLeft = true;
+                IsRight = false;
+            }
+            
         }
 
         if(compass == 1 || compass == -3)
         {
             moveVector = new Vector3(0, 0, -horizontal);
             characterController.Move(moveVector*speed*Time.deltaTime);
+
+            //character faced direction
+            if(horizontal > 0 && !IsRight)
+            {
+                Base.transform.Rotate(0,180,0);
+                IsRight = true;
+                IsLeft = false;
+            }
+            else if(horizontal < 0 && !IsLeft)
+            {
+                Base.transform.Rotate(0,180,0);
+                IsLeft = true;
+                IsRight = false;
+            }
+            
+            
         }
-
-        
-
-        
-
-        
-        
+   
     }
 
     void DirectionalRotation()
@@ -124,4 +174,5 @@ public class PlayerController : MonoBehaviour
             compass = 0;
         }
     }
+    
 }

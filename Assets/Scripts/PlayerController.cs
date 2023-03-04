@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
 
     bool moveRight;
     bool moveLeft;
+    bool isJump;
 
    
     bool IsLeft;
@@ -72,6 +73,11 @@ public class PlayerController : MonoBehaviour
     {
         moveLeft = false;
         moveSpeed = 0.0f;
+    }
+
+    public void JumpPress()
+    {
+        isJump = true;
     }
 
     void MovementLogic()
@@ -184,14 +190,15 @@ public class PlayerController : MonoBehaviour
 
     void Jump()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if(isJump)
         {
             gravity = JumpHeight;
+            isJump = false;
         }
 
-        Vector3 v = moveVector * speed;
-        v.y = gravity;
-        characterController.Move(v*Time.deltaTime);
+        Vector3 vector = moveVector * speed;
+        vector.y = gravity;
+        characterController.Move(vector*Time.deltaTime);
     }
 
     void ResetCompass()
